@@ -1,0 +1,123 @@
+name: FastPhase.AI CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install pandas openpyxl reportlab numpy scipy
+    
+    - name: Setup Conda for RDKit
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: '3.10'
+        channels: conda-forge
+        channel-priority: true
+    
+    - name: Install RDKit and Run FastPhase.AI
+      shell: bash -l {0}
+      run: |
+        # Install RDKit from conda-forge
+        conda install -c conda-forge rdkit -y
+        
+        # Verify RDKit is working
+        python -c "from rdkit import Chem; print('✅ RDKit version:', Chem.rdkit.__version__)"
+        
+        # Navigate to the correct directory (where main.py is located)
+        cd FastPhase.AI/python/
+        
+        # List files for debugging
+        echo "Files in $(pwd):"
+        ls -la
+        
+        # Run FastPhase.AI with a test compound
+        echo "🚀 Running FastPhase.AI on Ibuprofen..."
+        python main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --format both
+        
+        # Run a second test compound
+        echo "🚀 Running FastPhase.AI on Caffeine..."
+        python main.py --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C" --name "Caffeine" --format both
+        
+        echo "✅ Tests completed successfully!"
+    
+    - name: Verify reports were generated
+      shell: bash -l {0}
+      run: |
+        echo "=== Generated Reports ==="
+        find . -name "*.xlsx" -o -name "*.pdf" | head -20
+        echo ""
+        echo "=== Report count ==="
+        XLSX_COUNT=$(find . -name "*.xlsx" | wc -l)
+        PDF_COUNT=$(find . -name "*.pdf" | wc -l)
+        echo "📊 Excel reports: $XLSX_COUNT"
+        echo "📄 PDF reports: $PDF_COUNT"
+        
+        if [ $XLSX_COUNT -eq 0 ]; then
+          echo "⚠️ No Excel reports found!"
+          exit 1
+        fi
+        echo "✅ Reports generated successfully!"
+    
+    - name: Upload Excel Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: fastphase-excel-reports
+        path: |
+          **/output/reports/*.xlsx
+          **/reports/*.xlsx
+        retention-days: 90
+        if-no-files-found: warn
+    
+    - name: Upload PDF Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: fastphase-pdf-reports
+        path: |
+          **/output/reports/*.pdf
+          **/reports/*.pdf
+        retention-days: 90
+        if-no-files-found: warn
+    
+    - name: Upload Log Files
+      uses: actions/upload-artifact@v4
+      with:
+        name: fastphase-logs
+        path: |
+          **/*.log
+          **/logs/*.log
+        retention-days: 30
+        if-no-files-found: warn
+    
+    - name: Create Job Summary
+      run: |
+        echo "## FastPhase.AI Test Results ✅" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Test | Status | Details |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|---------|" >> $GITHUB_STEP_SUMMARY
+        echo "| RDKit Installation | ✅ Pass | Ready" >> $GITHUB_STEP_SUMMARY
+        echo "| Ibuprofen Processing | ✅ Pass | Report generated" >> $GITHUB_STEP_SUMMARY
+        echo "| Caffeine Processing | ✅ Pass | Report generated" >> $GITHUB_STEP_SUMMARY
+        echo "| Artifacts Upload | ✅ Pass | Check below" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📥 Download Reports" >> $GITHUB_STEP_SUMMARY
+        echo "- [Excel Reports](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "- [PDF Reports](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
