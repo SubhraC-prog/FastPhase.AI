@@ -1,0 +1,54 @@
+name: FastPhase.AI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install pandas openpyxl reportlab numpy scipy
+    
+    - name: Install RDKit
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: '3.10'
+        channels: conda-forge
+    
+    - name: Run tests with conda
+      shell: bash -l {0}
+      run: |
+        conda install -c conda-forge rdkit -y
+        python main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --format both
+    
+    - name: 📦 Upload Test Reports (CRITICAL STEP)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: |
+          output/reports/*.xlsx
+          output/reports/*.pdf
+          output/reports/*.json
+        retention-days: 30
+    
+    - name: 📊 Upload Logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-logs
+        path: python/*.log
+        retention-days: 7
