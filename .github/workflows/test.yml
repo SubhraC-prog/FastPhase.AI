@@ -62,22 +62,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
 
-      - name: Install RDKit
+           - name: Install RDKit
         shell: bash -l {0}
         run: |
           conda install -c conda-forge rdkit -y
           echo "✅ RDKit installed"
           python -c "
-from rdkit import Chem
-from rdkit import __version__
-print(f'✅ RDKit version: {__version__}')
-mol = Chem.MolFromSmiles('CC')
-if mol:
-    print('✅ RDKit molecular parsing works')
-else:
-    print('❌ RDKit molecular parsing failed')
-    exit(1)
-"
+          from rdkit import Chem
+          from rdkit import __version__
+          print(f'✅ RDKit version: {__version__}')
+          mol = Chem.MolFromSmiles('CC')
+          if mol:
+              print('✅ RDKit molecular parsing works')
+          else:
+              print('❌ RDKit molecular parsing failed')
+              exit(1)
+          "
 
       - name: Smoke test - check all module imports
         shell: bash -l {0}
