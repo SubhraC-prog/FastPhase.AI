@@ -45,9 +45,37 @@ jobs:
           ls -la repo/python/output/reports/
           echo "========================"
 
-      - name: Upload reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: fastphase-reports-${{ github.run_number }}
-          path: repo/python/output/reports/
-          retention-days: 90
+      - name: Save reports to branch
+        run: |
+          cd repo
+          
+          # Create or switch to reports branch
+          git checkout -b reports || git checkout reports
+          
+          # Copy reports
+          mkdir -p reports
+          cp python/output/reports/* reports/
+          
+          # Commit and push
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          git commit -m "Auto-generated reports $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes"
+          git push origin reports --force
+          
+          # Output links
+          echo ""
+          echo "=========================================="
+          echo "✅ REPORTS SAVED SUCCESSFULLY!"
+          echo "=========================================="
+          echo ""
+          echo "📁 Reports Branch:"
+          echo "   https://github.com/${{ github.repository }}/tree/reports"
+          echo ""
+          echo "📊 Reports Folder:"
+          echo "   https://github.com/${{ github.repository }}/tree/reports/reports"
+          echo ""
+          echo "📥 Download All Reports as ZIP:"
+          echo "   https://github.com/${{ github.repository }}/archive/refs/heads/reports.zip"
+          echo ""
+          echo "=========================================="
