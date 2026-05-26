@@ -1,11 +1,11 @@
-# Chromatography AI System v3.0
+# FastPhase.AI
 
 AI-assisted HPLC method development: Excel front-end + Python engines + VBA bridge.
 
 ## Architecture
 
 ```
-Chromatography_AI_System_v3.xlsm  ← Excel UI (DASHBOARD, SEARCH HISTORY, SETTINGS …)
+FastPhase.AI.xlsm  ← Excel UI (DASHBOARD, SEARCH HISTORY, SETTINGS …)
         │  VBA bridge (Module1_VBA_Controller.bas)
         ↓
 python/main.py                      ← Orchestrator
@@ -37,7 +37,7 @@ Python interpreter, e.g. `C:\ProgramData\miniconda3\envs\chrom\python.exe`.
 
 ### 3. Use the system
 
-1. Open `Chromatography_AI_System_v3.xlsm` and enable macros.
+1. Open `FastPhase.AI.xlsm` and enable macros.
 2. Paste a SMILES string into cell **C5** on the **DASHBOARD** sheet.
 3. Fill in Compound Name (C6), Project ID (C7), and optional Notes (C8).
 4. Click **▶ GENERATE REPORT** — a Python subprocess runs and results are written
@@ -53,45 +53,14 @@ python main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --for
 ### 5. Batch processing
 
 ```bash
-python main.py --batch --excel ../Chromatography_AI_System_v3.xlsm
+python main.py --batch --excel ../FastPhase.AI.xlsm
 ```
 
 ---
-
-## Bug Fixes Applied (v3.0.1)
-
-### VBA
-
-| ID | Location | Issue | Fix |
-|----|----------|-------|-----|
-| VBA-001 | `RunPython` | Path separator missing between `ThisWorkbook.Path` and `SCRIPT_NAME` | Added `sep` variable using `Application.PathSeparator` |
-| VBA-002 | `RunPython` | `--name` and `--project` args not passed to Python | Added correct arg construction with quote-escaping |
-| VBA-003 | `ValidateSMILES_Click` | Passed `--validate-only` flag that doesn't exist in `main.py` | Now sends `--format excel`; Python handles validate-only via new `--validate-only` flag |
-| VBA-004 | `UpdateStatus` | Status cells (H5/H6/H7) wrote to wrong ranges | Corrected to match DASHBOARD layout |
-| VBA-005 | `GetSetting` | Setting name lookup failed for aliased keys (e.g. `AutoOpenReports` vs `Auto-Open Reports`) | Added alias resolution map |
-| VBA-006 | `ClearAll_Click` | Cleared `C5:C8` but reset wrong status cells | Fixed to reset H5:H8 with correct labels |
-| VBA-007 | `RunPython` | Hard-coded `\` path separator breaks on macOS/Linux | Uses `Application.PathSeparator` |
-| VBA-008 | `UpdateHistory` | Parts index mapping off by 1 for report paths | Aligned with Python `result_line` output format |
-
-### Python
-
-| ID | Location | Issue | Fix |
-|----|----------|-------|-----|
-| PY-001 | `main.py` argparse | `--project` argument missing; used in `result_line` but never defined | Added `--project / -p` argument |
-| PY-002 | `main.py` argparse | `--validate-only` flag missing; VBA sends it | Added flag with early-return handler |
-| PY-003 | `main.py` `read_input_smiles` | Cell mapping used `B2-B5` but DASHBOARD has data in `C5-C8` | Fixed to `(4,2)-(7,2)` (0-indexed) |
-| PY-004 | `main.py` `update_live_preview` | Hard-coded `wb['Input']` fails (sheet is `DASHBOARD`) | Uses `_get_existing_sheet_name(['DASHBOARD','Input'])` |
-| PY-005 | `main.py` `_update_progress` | Same hard-coded `'Input'` issue + wrong cell refs (H5/H6) | Fixed sheet lookup + cell refs (H7/H8) |
-| PY-006 | `buffer_selector.py` `select_optimal_buffer` | Weight key lookup always fell through to default 0.1 due to broken string matching | Added explicit `_wkey_map` dict for rule→weight key |
-| PY-007 | `column_selector.py` | `from rdkit.Chem import MolFromSmarts` deprecated in RDKit ≥2023 | Removed import; uses `Chem.MolFromSmarts()` throughout |
-| PY-008 | `solvent_selector.py` | `'USE_RDKIT' in globals() and USE_RDKIT` fragile; breaks if imported | Simplified to direct module-level `if USE_RDKIT:` |
-
----
-
 ## Project Layout
 
 ```
-chromatography_ai/
+FastPhase.AI/
 ├── README.md
 ├── requirements.txt
 ├── Chromatography_AI_System_v3.xlsm   ← Excel workbook (copy here from original)
@@ -105,13 +74,7 @@ chromatography_ai/
 │   ├── solvent_selector.py
 │   └── reference_manager.py
 ├── vba/
-│   └── Module1_VBA_Controller.bas     ← Fixed VBA source (paste into Alt+F11)
-├── tests/
-│   └── test_smoke.py
-├── docs/
-│   └── vba_fix_notes.md
-└── output/
-    └── reports/                        ← Generated Excel + PDF reports land here
+│   └── Module1_VBA_Controller.bas     ← Fixed VBA source (paste into Alt+F11)                      ← Generated Excel + PDF reports land here
 ```
 
 ---
