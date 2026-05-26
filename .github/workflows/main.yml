@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -56,14 +59,15 @@ jobs:
           mkdir -p reports
           cp python/output/reports/* reports/
           
-          # Commit and push
+          # Commit
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add reports/
           git commit -m "Auto-generated reports $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes"
-          git push origin reports --force
           
-          # Output links
+          # Push using token
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git reports --force
+          
           echo ""
           echo "=========================================="
           echo "✅ REPORTS SAVED SUCCESSFULLY!"
@@ -74,8 +78,5 @@ jobs:
           echo ""
           echo "📊 Reports Folder:"
           echo "   https://github.com/${{ github.repository }}/tree/reports/reports"
-          echo ""
-          echo "📥 Download All Reports as ZIP:"
-          echo "   https://github.com/${{ github.repository }}/archive/refs/heads/reports.zip"
           echo ""
           echo "=========================================="
