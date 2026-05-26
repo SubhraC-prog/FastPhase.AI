@@ -5,6 +5,9 @@
 # Triggers on every push and pull request to main branch.
 # Runs the full test suite on Ubuntu with Python 3.10.
 # ============================================================
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
  
 name: FastPhase.AI CI
  
