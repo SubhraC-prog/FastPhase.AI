@@ -53,8 +53,8 @@ jobs:
           ls -la repo/python/output/reports/ || echo "No reports yet"
           echo "========================"
 
-      - name: Save reports as artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload reports
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
         with:
           name: fastphase-reports
           path: |
