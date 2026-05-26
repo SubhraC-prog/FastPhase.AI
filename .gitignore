@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+output/reports/
+chromatography_ai.log
+*.xlsm~
+.env
+*.egg-info/
+dist/
+build/
+.pytest_cache/

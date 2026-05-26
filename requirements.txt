@@ -1,0 +1,6 @@
+numpy>=1.24
+pandas>=2.0
+openpyxl>=3.1
+scipy>=1.11
+reportlab>=4.0
+rdkit>=2023.03          # via conda: conda install -c conda-forge rdkit
