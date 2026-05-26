@@ -42,9 +42,10 @@ jobs:
       - name: List generated reports
         run: |
           echo "=== Generated Reports ==="
-          ls -la repo/python/output/reports/ || echo "No reports yet"
+          ls -la repo/python/output/reports/
           echo "========================"
-       - name: Upload reports
+
+      - name: Upload reports
         uses: actions/upload-artifact@v4
         with:
           name: fastphase-reports-${{ github.run_number }}
