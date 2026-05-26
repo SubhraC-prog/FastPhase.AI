@@ -15,50 +15,32 @@ jobs:
           git clone https://github.com/${{ github.repository }}.git repo
           cd repo
           git checkout ${{ github.sha }}
-          ls -la
 
       - name: Setup Python
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3.10 python3-pip
-          python3 --version
+          sudo apt-get install -y python3.10 python3-pip python3-rdkit
 
-      - name: Install Python dependencies
-        run: |
-          pip3 install pandas openpyxl reportlab numpy scipy pytest
-
-      - name: Install RDKit
-        run: |
-          sudo apt-get install -y python3-rdkit
-          python3 -c "from rdkit import Chem; print('RDKit OK')"
+      - name: Install dependencies
+        run: pip3 install pandas openpyxl reportlab numpy scipy
 
       - name: Run FastPhase.AI - Ibuprofen
         run: |
           cd repo/python
-          python3 main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --format both
+          python3 main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --format both
 
       - name: Run FastPhase.AI - Caffeine
         run: |
           cd repo/python
-          python3 main.py --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C" --name "Caffeine" --format both
+          python3 main.py --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C" --format both
 
       - name: Run FastPhase.AI - Aspirin
         run: |
           cd repo/python
-          python3 main.py --smiles "CC(=O)OC1=CC=CC=C1C(=O)O" --name "Aspirin" --format both
+          python3 main.py --smiles "CC(=O)OC1=CC=CC=C1C(=O)O" --format both
 
       - name: List generated reports
         run: |
           echo "=== Generated Reports ==="
           ls -la repo/python/output/reports/ || echo "No reports yet"
           echo "========================"
-
-      - name: Upload reports
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3
-        with:
-          name: fastphase-reports
-          path: |
-            repo/python/output/reports/*.xlsx
-            repo/python/output/reports/*.pdf
-          retention-days: 90
-          if-no-files-found: warn
