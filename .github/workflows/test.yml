@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y \
-            libxrender1 libxext6 libgl1-mesa-glx \
+            libxrender1 libxext6 libgl1-mesa-dri \
             libglib2.0-0 libsm6
  
       # 4. Upgrade pip then install Python dependencies
