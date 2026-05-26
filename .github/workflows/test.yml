@@ -1,0 +1,121 @@
+# ============================================================
+# FastPhase.AI — GitHub Actions CI/CD Workflow
+# File: .github/workflows/ci.yml
+#
+# Triggers on every push and pull request to main branch.
+# Runs the full test suite on Ubuntu with Python 3.10.
+# ============================================================
+ 
+name: FastPhase.AI CI
+ 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+ 
+jobs:
+ 
+  # ──────────────────────────────────────────────────────────
+  # JOB 1: Run all tests
+  # ──────────────────────────────────────────────────────────
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+ 
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+ 
+    steps:
+      # 1. Check out source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+ 
+      # 2. Set up the requested Python version
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip           # Cache pip packages between runs
+ 
+      # 3. Install system dependencies needed by RDKit
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libxrender1 libxext6 libgl1-mesa-glx \
+            libglib2.0-0 libsm6
+ 
+      # 4. Upgrade pip then install Python dependencies
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+ 
+      # 5. Verify every module can be imported
+      - name: Smoke test — check all module imports
+        working-directory: python
+        run: |
+          python -c "from physchem_calculator import PhysicochemicalCalculator; print('physchem OK')"
+          python -c "from solvent_selector  import SolventSelectionSystem;       print('solvent OK')"
+          python -c "from column_selector   import HSMColumnSelector;             print('column OK')"
+          python -c "from buffer_selector   import BufferSelectionEngine;         print('buffer OK')"
+          python -c "from gradient_optimizer import GradientOptimizer;            print('gradient OK')"
+          python -c "from main import ChromatographyAIController;                 print('main OK')"
+ 
+      # 6. Validate a known SMILES string end-to-end
+      - name: Smoke test — validate Caffeine SMILES
+        working-directory: python
+        run: |
+          python main.py --validate-only \
+            --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+ 
+      # 7. Run full pytest suite with coverage report
+      - name: Run tests with coverage
+        run: |
+          pytest tests/test_fastphase.py \
+            -v \
+            --tb=short \
+            --cov=python \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-fail-under=60
+        env:
+          PYTHONPATH: python
+ 
+      # 8. Upload coverage to Codecov (optional — works automatically)
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+ 
+  # ──────────────────────────────────────────────────────────
+  # JOB 2: Lint check (code style)
+  # ──────────────────────────────────────────────────────────
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - uses: actions/checkout@v4
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+ 
+      - name: Install flake8
+        run: pip install flake8
+ 
+      - name: Run flake8
+        run: |
+          flake8 python/ \
+            --max-line-length=120 \
+            --ignore=E501,W503,E302,E303,W291,W293,E501,F401 \
+            --count \
+            --statistics
+        continue-on-error: true   # Lint failures are warnings, not blockers
