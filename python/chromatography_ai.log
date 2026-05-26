@@ -1,0 +1,67 @@
+2026-05-26 12:31:19,875 - __main__ - WARNING - Report Template not available: No module named 'report_template'
+2026-05-26 12:31:19,875 - __main__ - WARNING - Excel Formatter not available: No module named 'excel_formatter'
+2026-05-26 12:31:20,036 - __main__ - INFO - ================================================================================
+2026-05-26 12:31:20,036 - __main__ - INFO - CHROMATOGRAPHY AI SYSTEM v2.0
+2026-05-26 12:31:20,036 - __main__ - INFO - ================================================================================
+2026-05-26 12:31:20,037 - __main__ - INFO -   HSM Estimator initialized
+2026-05-26 12:31:20,054 - column_selector - INFO - Loaded 15 sample columns. For full database, use load_from_csv()
+2026-05-26 12:31:20,054 - __main__ - INFO -   Column Selector initialized
+2026-05-26 12:31:20,055 - __main__ - INFO -   Solvent Selector initialized
+2026-05-26 12:31:20,064 - __main__ - INFO -   Buffer Selector initialized
+2026-05-26 12:31:20,064 - gradient_optimizer - INFO - Initialized optimizer with column volume: 2.49 mL
+2026-05-26 12:31:20,064 - __main__ - INFO -   Gradient Optimizer initialized
+2026-05-26 12:31:20,064 - __main__ - INFO -   Physicochemical Calculator ready
+2026-05-26 12:31:20,065 - __main__ - INFO - System initialization complete
+2026-05-26 12:31:20,065 - __main__ - INFO - 
+Module Status:
+2026-05-26 12:31:20,066 - __main__ - INFO -   HSM Estimator: Available
+2026-05-26 12:31:20,066 - __main__ - INFO -   Column Selector: Available
+2026-05-26 12:31:20,066 - __main__ - INFO -   Solvent Selector: Available
+2026-05-26 12:31:20,066 - __main__ - INFO -   Buffer Selector: Available
+2026-05-26 12:31:20,066 - __main__ - INFO -   Gradient Optimizer: Available
+2026-05-26 12:31:20,066 - __main__ - INFO -   PhysChem Calculator: Available
+2026-05-26 12:31:20,070 - __main__ - INFO - Processing compound: CC(C)CC1=CC=C(C=C1)C(C)C(=O)O...
+2026-05-26 12:31:20,249 - physchem_calculator - INFO - Initialized calculator for SMILES: CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
+2026-05-26 12:31:20,249 - physchem_calculator - INFO - Starting comprehensive property calculation
+2026-05-26 12:31:20,274 - physchem_calculator - INFO - Property calculation complete
+2026-05-26 12:31:20,290 - gradient_optimizer - INFO - Starting gradient optimization for 1 compounds
+2026-05-26 12:31:20,298 - gradient_optimizer - INFO - Optimization complete. Runtime: 27.0 min
+2026-05-26 12:31:20,299 - __main__ - INFO - Generating formatted report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123120.xlsx
+2026-05-26 12:31:20,301 - __main__ - ERROR - Error generating report: Cannot convert [np.float64(2.174), np.float64(0.632), np.float64(2.174), np.float64(1.043), np.float64(1.27), np.float64(2.023), np.float64(1.913), np.float64(0.87), np.float64(1.913), np.float64(2.023)] to Excel
+2026-05-26 12:31:20,320 - __main__ - INFO - JSON fallback generated: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123120.json
+2026-05-26 12:31:20,321 - __main__ - INFO - Excel report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123120.json
+2026-05-26 12:31:20,327 - __main__ - INFO - PDF report generated with fallback: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123120.pdf
+2026-05-26 12:31:20,327 - __main__ - INFO - PDF report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123120.pdf
+2026-05-26 12:36:13,616 - __main__ - WARNING - Excel Formatter not available: No module named 'excel_formatter'
+2026-05-26 12:36:13,777 - __main__ - INFO - ================================================================================
+2026-05-26 12:36:13,777 - __main__ - INFO - CHROMATOGRAPHY AI SYSTEM v2.0
+2026-05-26 12:36:13,777 - __main__ - INFO - ================================================================================
+2026-05-26 12:36:13,778 - __main__ - INFO -   HSM Estimator initialized
+2026-05-26 12:36:13,796 - column_selector - INFO - Loaded 15 sample columns. For full database, use load_from_csv()
+2026-05-26 12:36:13,796 - __main__ - INFO -   Column Selector initialized
+2026-05-26 12:36:13,799 - __main__ - INFO -   Solvent Selector initialized
+2026-05-26 12:36:13,807 - __main__ - INFO -   Buffer Selector initialized
+2026-05-26 12:36:13,807 - gradient_optimizer - INFO - Initialized optimizer with column volume: 2.49 mL
+2026-05-26 12:36:13,807 - __main__ - INFO -   Gradient Optimizer initialized
+2026-05-26 12:36:13,807 - __main__ - INFO -   Physicochemical Calculator ready
+2026-05-26 12:36:13,808 - __main__ - INFO - System initialization complete
+2026-05-26 12:36:13,808 - __main__ - INFO - 
+Module Status:
+2026-05-26 12:36:13,808 - __main__ - INFO -   HSM Estimator: Available
+2026-05-26 12:36:13,808 - __main__ - INFO -   Column Selector: Available
+2026-05-26 12:36:13,808 - __main__ - INFO -   Solvent Selector: Available
+2026-05-26 12:36:13,808 - __main__ - INFO -   Buffer Selector: Available
+2026-05-26 12:36:13,808 - __main__ - INFO -   Gradient Optimizer: Available
+2026-05-26 12:36:13,808 - __main__ - INFO -   PhysChem Calculator: Available
+2026-05-26 12:36:13,811 - __main__ - INFO - Processing compound: CC(C)CC1=CC=C(C=C1)C(C)C(=O)O...
+2026-05-26 12:36:14,022 - physchem_calculator - INFO - Initialized calculator for SMILES: CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
+2026-05-26 12:36:14,022 - physchem_calculator - INFO - Starting comprehensive property calculation
+2026-05-26 12:36:14,050 - physchem_calculator - INFO - Property calculation complete
+2026-05-26 12:36:14,077 - gradient_optimizer - INFO - Starting gradient optimization for 1 compounds
+2026-05-26 12:36:14,089 - gradient_optimizer - INFO - Optimization complete. Runtime: 27.0 min
+2026-05-26 12:36:14,090 - __main__ - INFO - Generating formatted report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.xlsx
+2026-05-26 12:36:14,482 - __main__ - INFO - Report generated: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.xlsx
+2026-05-26 12:36:14,482 - __main__ - INFO - Excel report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.xlsx
+2026-05-26 12:36:14,672 - report_template - INFO - PDF report generated: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.pdf
+2026-05-26 12:36:14,672 - __main__ - INFO - PDF report generated: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.pdf
+2026-05-26 12:36:14,673 - __main__ - INFO - PDF report: C:\Users\Subhr\Downloads\chromatography_ai\python\output\reports\report__20260526_123614.pdf
