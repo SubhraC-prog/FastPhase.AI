@@ -1,11 +1,6 @@
 # ============================================================
 # FastPhase.AI - GitHub Actions CI/CD Workflow
 # ============================================================
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
 name: FastPhase.AI CI
 
 on:
