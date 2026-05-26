@@ -13,7 +13,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
  
@@ -29,18 +29,15 @@ jobs:
         python-version: ["3.10", "3.11"]
 
     steps:
-      # 1. Check out source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up the requested Python version
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      # 3. Install system dependencies needed by RDKit
       - name: Install system dependencies
         run: |
           sudo apt-get update -qq
@@ -48,14 +45,12 @@ jobs:
             libxrender1 libxext6 libgl1-mesa-dri \
             libglib2.0-0 libsm6 || true
 
-      # 4. Upgrade pip then install Python dependencies
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      # 5. Setup Conda for RDKit
       - name: Setup Conda
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -63,15 +58,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
 
-     # 6. Install RDKit and verify
-- name: Install RDKit
-  shell: bash -l {0}
-  run: |
-    conda install -c conda-forge rdkit -y
-    echo "✅ RDKit installed"
-    
-    # Test RDKit imports properly
-    python -c "
+      - name: Install RDKit
+        shell: bash -l {0}
+        run: |
+          conda install -c conda-forge rdkit -y
+          echo "✅ RDKit installed"
+          python -c "
 from rdkit import Chem
 from rdkit import __version__
 print(f'✅ RDKit version: {__version__}')
@@ -83,7 +75,6 @@ else:
     exit(1)
 "
 
-      # 7. Verify every module can be imported
       - name: Smoke test — check all module imports
         shell: bash -l {0}
         run: |
@@ -94,18 +85,17 @@ else:
           python -c "from buffer_selector   import BufferSelectionEngine;         print('✅ buffer OK')"
           python -c "from gradient_optimizer import GradientOptimizer;            print('✅ gradient OK')"
 
-      # 8. Validate a known SMILES string end-to-end
       - name: Smoke test — validate Caffeine SMILES
         shell: bash -l {0}
         run: |
           cd python
           python main.py --validate-only --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
 
-      # 9. Run actual processing to generate reports
       - name: Generate test reports
         shell: bash -l {0}
         run: |
           cd python
+          mkdir -p output/reports
           echo "🚀 Generating Ibuprofen report..."
           python main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --format both || true
           echo "🚀 Generating Caffeine report..."
@@ -113,8 +103,8 @@ else:
           echo "🚀 Generating Aspirin report..."
           python main.py --smiles "CC(=O)OC1=CC=CC=C1C(=O)O" --name "Aspirin" --format both || true
           echo "✅ Report generation complete"
+          ls -la output/reports/
 
-      # 10. Run full pytest suite with coverage report
       - name: Run tests with coverage
         shell: bash -l {0}
         run: |
@@ -127,7 +117,6 @@ else:
         env:
           PYTHONPATH: python
 
-      # 11. 📤 Upload Excel Reports (CRITICAL - This generates artifacts!)
       - name: Upload Excel Reports
         uses: actions/upload-artifact@v4
         with:
@@ -139,7 +128,6 @@ else:
           retention-days: 90
           if-no-files-found: warn
 
-      # 12. 📤 Upload PDF Reports (CRITICAL - This generates artifacts!)
       - name: Upload PDF Reports
         uses: actions/upload-artifact@v4
         with:
@@ -151,7 +139,6 @@ else:
           retention-days: 90
           if-no-files-found: warn
 
-      # 13. 📤 Upload Log Files
       - name: Upload Log Files
         uses: actions/upload-artifact@v4
         with:
@@ -163,7 +150,6 @@ else:
           retention-days: 30
           if-no-files-found: warn
 
-      # 14. 📤 Upload Coverage Report
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
@@ -174,7 +160,6 @@ else:
           retention-days: 30
           if-no-files-found: warn
 
-      # 15. Upload coverage to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         if: always()
@@ -182,7 +167,6 @@ else:
           files: coverage.xml
           fail_ci_if_error: false
 
-      # 16. Create job summary
       - name: Create Job Summary
         if: always()
         run: |
@@ -223,7 +207,7 @@ else:
         run: |
           flake8 python/ \
             --max-line-length=120 \
-            --ignore=E501,W503,E302,E303,W291,W293,E501,F401 \
+            --ignore=E501,W503,E302,E303,W291,W293,F401 \
             --count \
             --statistics || true
         continue-on-error: true
