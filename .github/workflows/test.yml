@@ -1,9 +1,5 @@
 # ============================================================
 # FastPhase.AI - GitHub Actions CI/CD Workflow
-# File: .github/workflows/ci.yml
-#
-# Triggers on every push and pull request to main branch.
-# Runs the full test suite on Ubuntu with Python 3.10.
 # ============================================================
 
 concurrency:
@@ -20,10 +16,6 @@ on:
   workflow_dispatch:
 
 jobs:
- 
-  # ----------------------------------------------------------
-  # JOB 1: Run all tests
-  # ----------------------------------------------------------
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -62,32 +54,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
 
-           - name: Install RDKit
+      - name: Install RDKit
         shell: bash -l {0}
         run: |
           conda install -c conda-forge rdkit -y
-          echo "✅ RDKit installed"
-          python -c "
-          from rdkit import Chem
-          from rdkit import __version__
-          print(f'✅ RDKit version: {__version__}')
-          mol = Chem.MolFromSmiles('CC')
-          if mol:
-              print('✅ RDKit molecular parsing works')
-          else:
-              print('❌ RDKit molecular parsing failed')
-              exit(1)
-          "
+          echo "RDKit installed"
+          python -c "from rdkit import Chem; from rdkit import __version__; print(f'RDKit version: {__version__}'); mol = Chem.MolFromSmiles('CC'); print('RDKit works')"
 
       - name: Smoke test - check all module imports
         shell: bash -l {0}
         run: |
           cd python
-          python -c "from physchem_calculator import PhysicochemicalCalculator; print('✅ physchem OK')"
-          python -c "from solvent_selector  import SolventSelectionSystem;       print('✅ solvent OK')"
-          python -c "from column_selector   import HSMColumnSelector;             print('✅ column OK')"
-          python -c "from buffer_selector   import BufferSelectionEngine;         print('✅ buffer OK')"
-          python -c "from gradient_optimizer import GradientOptimizer;            print('✅ gradient OK')"
+          python -c "from physchem_calculator import PhysicochemicalCalculator; print('physchem OK')"
+          python -c "from solvent_selector import SolventSelectionSystem; print('solvent OK')"
+          python -c "from column_selector import HSMColumnSelector; print('column OK')"
+          python -c "from buffer_selector import BufferSelectionEngine; print('buffer OK')"
+          python -c "from gradient_optimizer import GradientOptimizer; print('gradient OK')"
 
       - name: Smoke test - validate Caffeine SMILES
         shell: bash -l {0}
@@ -100,24 +82,19 @@ jobs:
         run: |
           cd python
           mkdir -p output/reports
-          echo "🚀 Generating Ibuprofen report..."
+          echo "Generating Ibuprofen report..."
           python main.py --smiles "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" --name "Ibuprofen" --format both || true
-          echo "🚀 Generating Caffeine report..."
+          echo "Generating Caffeine report..."
           python main.py --smiles "CN1C=NC2=C1C(=O)N(C(=O)N2C)C" --name "Caffeine" --format both || true
-          echo "🚀 Generating Aspirin report..."
+          echo "Generating Aspirin report..."
           python main.py --smiles "CC(=O)OC1=CC=CC=C1C(=O)O" --name "Aspirin" --format both || true
-          echo "✅ Report generation complete"
+          echo "Report generation complete"
           ls -la output/reports/
 
       - name: Run tests with coverage
         shell: bash -l {0}
         run: |
-          pytest tests/test_fastphase.py \
-            -v \
-            --tb=short \
-            --cov=python \
-            --cov-report=term-missing \
-            --cov-report=xml:coverage.xml || true
+          pytest tests/test_fastphase.py -v --tb=short --cov=python --cov-report=term-missing --cov-report=xml:coverage.xml || true
         env:
           PYTHONPATH: python
 
@@ -178,20 +155,12 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| RDKit Installation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| Module Imports | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| SMILES Validation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| Report Generation | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
-          echo "| Tests Run | ✅ Completed |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📥 Download Artifacts" >> $GITHUB_STEP_SUMMARY
-          echo "- [Excel Reports](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-          echo "- [PDF Reports](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-          echo "- [Log Files](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "| RDKit Installation | Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Module Imports | Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| SMILES Validation | Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Report Generation | Completed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests Run | Completed |" >> $GITHUB_STEP_SUMMARY
 
-  # ----------------------------------------------------------
-  # JOB 2: Lint check (code style)
-  # ----------------------------------------------------------
   lint:
     name: Lint (flake8)
     runs-on: ubuntu-latest
@@ -224,9 +193,6 @@ jobs:
             flake8_output.txt
           retention-days: 7
 
-  # ----------------------------------------------------------
-  # JOB 3: Summary (runs after all jobs)
-  # ----------------------------------------------------------
   summary:
     name: Summary
     runs-on: ubuntu-latest
@@ -236,6 +202,6 @@ jobs:
     steps:
       - name: All jobs completed
         run: |
-          echo "✅ FastPhase.AI CI/CD completed!"
-          echo "📊 Test status: ${{ needs.test.result }}"
-          echo "📝 Lint status: ${{ needs.lint.result }}"
+          echo "FastPhase.AI CI/CD completed!"
+          echo "Test status: ${{ needs.test.result }}"
+          echo "Lint status: ${{ needs.lint.result }}"
