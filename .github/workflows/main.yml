@@ -44,3 +44,9 @@ jobs:
           echo "=== Generated Reports ==="
           ls -la repo/python/output/reports/ || echo "No reports yet"
           echo "========================"
+       - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastphase-reports-${{ github.run_number }}
+          path: repo/python/output/reports/
+          retention-days: 90
