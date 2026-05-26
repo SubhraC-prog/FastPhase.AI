@@ -1,5 +1,5 @@
 # ============================================================
-# FastPhase.AI — GitHub Actions CI/CD Workflow
+# FastPhase.AI - GitHub Actions CI/CD Workflow
 # File: .github/workflows/ci.yml
 #
 # Triggers on every push and pull request to main branch.
@@ -21,9 +21,9 @@ on:
 
 jobs:
  
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   # JOB 1: Run all tests
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ else:
     exit(1)
 "
 
-      - name: Smoke test — check all module imports
+      - name: Smoke test - check all module imports
         shell: bash -l {0}
         run: |
           cd python
@@ -89,7 +89,7 @@ else:
           python -c "from buffer_selector   import BufferSelectionEngine;         print('✅ buffer OK')"
           python -c "from gradient_optimizer import GradientOptimizer;            print('✅ gradient OK')"
 
-      - name: Smoke test — validate Caffeine SMILES
+      - name: Smoke test - validate Caffeine SMILES
         shell: bash -l {0}
         run: |
           cd python
@@ -189,9 +189,9 @@ else:
           echo "- [PDF Reports](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
           echo "- [Log Files](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   # JOB 2: Lint check (code style)
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   lint:
     name: Lint (flake8)
     runs-on: ubuntu-latest
@@ -224,9 +224,9 @@ else:
             flake8_output.txt
           retention-days: 7
 
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   # JOB 3: Summary (runs after all jobs)
-  # ──────────────────────────────────────────────────────────
+  # ----------------------------------------------------------
   summary:
     name: Summary
     runs-on: ubuntu-latest
