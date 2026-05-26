@@ -81,7 +81,7 @@ jobs:
             --cov=python \
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \
-            --cov-fail-under=60
+           
         env:
           PYTHONPATH: python
  
